@@ -3,7 +3,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 body{font-family:system-ui,Segoe UI,Arial,sans-serif;max-width:760px;margin:24px auto;padding:0 16px}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.row{
+  display:flex;
+  gap:8px;
+  align-items:center;   
+  flex-wrap:wrap;
+  margin:8px 0;
+}
+.field{
+  display:flex;
+  flex-direction:column;
+  position:relative;    
+}
 input,select,button{font-size:16px;padding:8px}
 pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
 .small{font-size:12px;color:#666}
@@ -11,17 +22,23 @@ pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
   width: 12ch;
 }
 .suggest-box{
-  font-size:14px;
-  background:#f6f6f6;
-  padding:4px 8px;
+  position:absolute;
+  left:0;
+  top:100%;           
   margin-top:2px;
+  width:100%;
   max-height:150px;
   overflow:auto;
+
+  font-size:16px;
+  background:#f6f6f6;
   border:1px solid #ddd;
+  box-sizing:border-box;
+  z-index:10;
 }
 .suggest-item{
   cursor:pointer;
-  padding:2px 0;
+  padding:6px 8px;
 }
 </style>
 <h1>TransAutumnlin </h1>
@@ -46,45 +63,6 @@ pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
   <button id="swap">↕ 交換</button>
 </div>
 
-.row{
-  display:flex;
-  gap:8px;
-  align-items:center;   
-  flex-wrap:wrap;
-  margin:8px 0;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  position:relative;    
-}
-
-
-#src,#dst{
-  width:12ch;
-}
-
-.suggest-box{
-  position:absolute;
-  left:0;
-  top:100%;            
-  margin-top:2px;
-  width:100%;
-  max-height:150px;
-  overflow:auto;
-
-  font-size:16px;
-  background:#f6f6f6;
-  border:1px solid #ddd;
-  box-sizing:border-box;
-  z-index:10;
-}
-
-.suggest-item{
-  cursor:pointer;
-  padding:6px 8px;
-}
 
 <pre id="out">結果將顯示於此</pre>
 
