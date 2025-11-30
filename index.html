@@ -62,7 +62,7 @@ function attachSuggest(inputEl, boxEl){
       return;
     }
     // 找出最多 10 個包含關鍵字的站名
-    const matches = STATIONS.filter(name => name.includes(v)).slice(0,10);
+    const matches = STATIONS.filter(name => name.includes(v));
     if(matches.length === 0){
       boxEl.innerHTML = '';
       return;
