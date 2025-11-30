@@ -14,9 +14,10 @@ pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
   font-size:14px;
   background:#f6f6f6;
   padding:4px 8px;
-  margin:4px 0;
+  margin-top:2px;
   max-height:150px;
   overflow:auto;
+  border:1px solid #ddd;
 }
 .suggest-item{
   cursor:pointer;
@@ -25,8 +26,18 @@ pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
 </style>
 <h1>TransAutumnlin </h1>
 <div class="row">
-  <label>起站</label><input id="src" placeholder="例如：新城">
-  <label>迄站</label><input id="dst" placeholder="例如：格肯">
+  <div class="field">
+    <label>起站</label>
+    <input id="src" placeholder="例如：新城">
+    <div id="src-suggest" class="suggest-box"></div>
+  </div>
+
+  <div class="field">
+    <label>迄站</label>
+    <input id="dst" placeholder="例如：格肯">
+    <div id="dst-suggest" class="suggest-box"></div>
+  </div>
+
   <select id="mode">
     <option value="transfers">最少轉乘</option>
     <option value="stops">最少站數</option>
@@ -34,8 +45,6 @@ pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
   <button id="go">查詢</button>
   <button id="swap">↕ 交換</button>
 </div>
-<div id="src-suggest" class="suggest-box"></div>
-<div id="dst-suggest" class="suggest-box"></div>
 
 <pre id="out">結果將顯示於此</pre>
 
