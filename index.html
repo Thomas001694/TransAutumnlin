@@ -1,0 +1,68 @@
+<!doctype html><meta charset="utf-8">
+<title>TransAutumnlin Web</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body{font-family:system-ui,Segoe UI,Arial,sans-serif;max-width:760px;margin:24px auto;padding:0 16px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+input,select,button{font-size:16px;padding:8px}
+pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
+.small{font-size:12px;color:#666}
+</style>
+<h1>TransAutumnlin 導航（Web 版）</h1>
+<div class="row">
+  <label>起點</label><input id="src" placeholder="例如：新城">
+  <label>終點</label><input id="dst" placeholder="例如：鎮北">
+  <select id="mode">
+    <option value="transfers">最少轉乘（次要：站數）</option>
+    <option value="stops">最少站數</option>
+  </select>
+  <button id="go">查詢</button>
+  <button id="swap">↕ 交換</button>
+</div>
+<div class="small">資料：<code>routes.json</code>（可自行替換）。</div>
+<pre id="out">結果將顯示於此</pre>
+
+<script type="module">
+import {loadRoutes, queryRoute, stationNames} from './app.js';
+
+const out = document.getElementById('out');
+const src = document.getElementById('src');
+const dst = document.getElementById('dst');
+const modeSel = document.getElementById('mode');
+document.getElementById('swap').onclick = () => { const t=src.value; src.value=dst.value; dst.value=t; };
+
+let ROUTE_DATA=null, INDEX=null;
+
+async function init(){
+  try{
+    ROUTE_DATA = await loadRoutes('routes.json');
+    INDEX = stationNames(ROUTE_DATA);
+    out.textContent = `載入完成。共有站點：${INDEX.length}。請輸入站名查詢。`;
+  }catch(e){
+    out.textContent = '載入 routes.json 失敗：' + e;
+  }
+}
+
+document.getElementById('go').onclick = () => {
+  if(!ROUTE_DATA){ out.textContent='尚未載入資料'; return; }
+  const s = src.value.trim(), d = dst.value.trim(), m = modeSel.value;
+  if(!s || !d){ out.textContent='請輸入起點與終點'; return; }
+  const res = queryRoute(ROUTE_DATA, s, d, m);
+  if(res.error){ out.textContent = '錯誤：' + res.error; return; }
+  const seg = res.segments.slice(1).map((e,i)=>{
+    const prev = res.segments[i][0];
+    const cur = e[0];
+    const line = e[1] || '(起點)';
+    return `  ${prev} → ${cur} ｜線：${line}`;
+  }).join('\n');
+
+  out.textContent =
+    `路徑：${res.path.join(' → ')}\n` +
+    `站數：${res.stops}\n` +
+    `轉乘：${res.transfers}\n` +
+    `實際途經：${res.detail}\n` +
+    `段落：\n${seg}`;
+};
+
+init();
+</script>
