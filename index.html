@@ -8,18 +8,17 @@ input,select,button{font-size:16px;padding:8px}
 pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
 .small{font-size:12px;color:#666}
 </style>
-<h1>TransAutumnlin 導航（Web 版）</h1>
+<h1>TransAutumnlin </h1>
 <div class="row">
   <label>起點</label><input id="src" placeholder="例如：新城">
   <label>終點</label><input id="dst" placeholder="例如：鎮北">
   <select id="mode">
-    <option value="transfers">最少轉乘（次要：站數）</option>
+    <option value="transfers">最少轉乘</option>
     <option value="stops">最少站數</option>
   </select>
   <button id="go">查詢</button>
   <button id="swap">↕ 交換</button>
 </div>
-<div class="small">資料：<code>routes.json</code>（可自行替換）。</div>
 <pre id="out">結果將顯示於此</pre>
 
 <script type="module">
