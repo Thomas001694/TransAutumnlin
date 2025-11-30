@@ -10,6 +10,18 @@ pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
 #src,#dst{
   width: 12ch;
 }
+.suggest-box{
+  font-size:14px;
+  background:#f6f6f6;
+  padding:4px 8px;
+  margin:4px 0;
+  max-height:150px;
+  overflow:auto;
+}
+.suggest-item{
+  cursor:pointer;
+  padding:2px 0;
+}
 </style>
 <h1>TransAutumnlin </h1>
 <div class="row">
@@ -22,6 +34,9 @@ pre{background:#f6f6f6;padding:12px;white-space:pre-wrap}
   <button id="go">查詢</button>
   <button id="swap">↕ 交換</button>
 </div>
+<div id="src-suggest" class="suggest-box"></div>
+<div id="dst-suggest" class="suggest-box"></div>
+
 <pre id="out">結果將顯示於此</pre>
 
 <script type="module">
@@ -31,15 +46,57 @@ const out = document.getElementById('out');
 const src = document.getElementById('src');
 const dst = document.getElementById('dst');
 const modeSel = document.getElementById('mode');
+const srcBox = document.getElementById('src-suggest');
+const dstBox = document.getElementById('dst-suggest');
 document.getElementById('swap').onclick = () => { const t=src.value; src.value=dst.value; dst.value=t; };
 
-let ROUTE_DATA=null, INDEX=null;
+let ROUTE_DATA=null;
+let STATIONS=[];
+
+// 共用：附加自動完成
+function attachSuggest(inputEl, boxEl){
+  inputEl.addEventListener('input', ()=>{
+    const v = inputEl.value.trim();
+    if(!v){
+      boxEl.innerHTML = '';
+      return;
+    }
+    // 找出最多 10 個包含關鍵字的站名
+    const matches = STATIONS.filter(name => name.includes(v)).slice(0,10);
+    if(matches.length === 0){
+      boxEl.innerHTML = '';
+      return;
+    }
+    boxEl.innerHTML = matches
+      .map(name => `<div class="suggest-item" data-name="${name}">${name}</div>`)
+      .join('');
+  });
+
+  // 點選後填入輸入框
+  boxEl.addEventListener('click', e=>{
+    const t = e.target;
+    if(t.matches('.suggest-item')){
+      inputEl.value = t.dataset.name;
+      boxEl.innerHTML = '';
+    }
+  });
+
+  // 離開輸入框時收起建議（可選）
+  inputEl.addEventListener('blur', ()=> {
+    setTimeout(()=>{ boxEl.innerHTML=''; }, 200);
+  });
+}
 
 async function init(){
   try{
     ROUTE_DATA = await loadRoutes('routes.json');
-    INDEX = stationNames(ROUTE_DATA);
-    out.textContent = `載入完成。共有站點：${INDEX.length}。請輸入站名查詢。`;
+    STATIONS = stationNames(ROUTE_DATA);
+    out.textContent = `載入完成。共有站點：${STATIONS.length}。請輸入站名查詢。`;
+
+    // 啟用自動完成
+    attachSuggest(src, srcBox);
+    attachSuggest(dst, dstBox);
+
   }catch(e){
     out.textContent = '載入 routes.json 失敗：' + e;
   }
@@ -68,3 +125,5 @@ document.getElementById('go').onclick = () => {
 
 init();
 </script>
+
+
