@@ -35,24 +35,40 @@
         <div class="form-grid">
           <label class="field">
             <span>起點</span>
-            <select id="start-station" required>
-              <option value="">請選擇</option>
-            </select>
+             <input
+                id="start-station"
+                list="station-list"
+                type="text"
+                placeholder="輸入起點站"
+                autocomplete="off"
+                required
+            >
           </label>
 
           <label class="field">
             <span>終點</span>
-            <select id="goal-station" required>
-              <option value="">請選擇</option>
-            </select>
+            <input
+              id="goal-station"
+              list="station-list"
+              type="text"
+              placeholder="輸入終點站"
+              autocomplete="off"
+              required
+            >
           </label>
 
           <label class="field">
             <span>經由(可選)</span>
-            <select id="via-station">
-              <option value="">不指定</option>
-            </select>
+            <input
+              id="via-station"
+              list="station-list"
+              type="text"
+              placeholder="不指定"
+              autocomplete="off"
+            >
           </label>
+
+          <datalist id="station-list"></datalist>
 
           <label class="field">
             <span>排列方式</span>
