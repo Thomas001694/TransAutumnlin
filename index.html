@@ -4,21 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#17324d">
-  <meta name="description" content="整合奧鐵全路線的轉乘路徑規劃">
-  <title>奧鐵路線查詢工具</title>
+  <meta name="description" content="TransAutumnlin-Demo 54-web，可搜尋最少轉乘或最少站數的路線。">
+  <title>TransAutumnlin-Demo 54-web</title>
 
   <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=2">
-  <script type="module" src="./app.js?v=2"></script>
+  <link rel="stylesheet" href="./styles.css?v=54-combobox-2">
+  <script type="module" src="./app.js?v=54-combobox-2"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="header-inner">
       <div>
-        <p class="eyebrow">AR Route Planner</p>
-        <h1>奧鐵路線查詢工具</h1>
-        <p class="subtitle">整合奧鐵全路線的轉乘路徑規劃</p>
+        <p class="eyebrow">TransAutumnlin-Demo 54-web</p>
+        <h1>TransAutumnlin-Demo 54-web</h1>
+        <p class="subtitle">依起點、終點與經由站搜尋最佳搭乘路線。</p>
       </div>
 
       <button id="install-button" class="secondary-button install-button" type="button" hidden>
@@ -35,43 +35,103 @@
 
       <form id="route-form" novalidate>
         <div class="form-grid">
-          <label class="field" for="start-station">
-            <span>起點站</span>
-            <input
-              id="start-station"
-              list="station-list"
-              type="text"
-              placeholder="輸入起點站"
-              autocomplete="off"
-              spellcheck="false"
-              required
-            >
-          </label>
+          <div class="field">
+            <label for="start-station">起點站</label>
+            <div class="station-combobox" data-station-combobox>
+              <input
+                id="start-station"
+                type="text"
+                placeholder="輸入或選擇起點站"
+                autocomplete="off"
+                spellcheck="false"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="start-station-options"
+                required
+              >
+              <button
+                class="combobox-toggle"
+                type="button"
+                aria-label="展開起點站清單"
+                aria-controls="start-station-options"
+                tabindex="-1"
+              >
+                <span aria-hidden="true">▾</span>
+              </button>
+              <ul
+                id="start-station-options"
+                class="combobox-options"
+                role="listbox"
+                hidden
+              ></ul>
+            </div>
+          </div>
 
-          <label class="field" for="goal-station">
-            <span>終點站</span>
-            <input
-              id="goal-station"
-              list="station-list"
-              type="text"
-              placeholder="輸入終點站"
-              autocomplete="off"
-              spellcheck="false"
-              required
-            >
-          </label>
+          <div class="field">
+            <label for="goal-station">終點站</label>
+            <div class="station-combobox" data-station-combobox>
+              <input
+                id="goal-station"
+                type="text"
+                placeholder="輸入或選擇終點站"
+                autocomplete="off"
+                spellcheck="false"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="goal-station-options"
+                required
+              >
+              <button
+                class="combobox-toggle"
+                type="button"
+                aria-label="展開終點站清單"
+                aria-controls="goal-station-options"
+                tabindex="-1"
+              >
+                <span aria-hidden="true">▾</span>
+              </button>
+              <ul
+                id="goal-station-options"
+                class="combobox-options"
+                role="listbox"
+                hidden
+              ></ul>
+            </div>
+          </div>
 
-          <label class="field" for="via-station">
-            <span>經由(可選)</span>
-            <input
-              id="via-station"
-              list="station-list"
-              type="text"
-              placeholder="可留空"
-              autocomplete="off"
-              spellcheck="false"
-            >
-          </label>
+          <div class="field">
+            <label for="via-station">經由站（可選）</label>
+            <div class="station-combobox" data-station-combobox data-allow-empty="true">
+              <input
+                id="via-station"
+                type="text"
+                placeholder="輸入、選擇或留空"
+                autocomplete="off"
+                spellcheck="false"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="via-station-options"
+              >
+              <button
+                class="combobox-toggle"
+                type="button"
+                aria-label="展開經由站清單"
+                aria-controls="via-station-options"
+                tabindex="-1"
+              >
+                <span aria-hidden="true">▾</span>
+              </button>
+              <ul
+                id="via-station-options"
+                class="combobox-options"
+                role="listbox"
+                hidden
+              ></ul>
+            </div>
+          </div>
 
           <label class="field" for="search-mode">
             <span>排列方式</span>
@@ -81,9 +141,6 @@
             </select>
           </label>
         </div>
-
-        <!-- 三個輸入欄共用同一份車站建議清單。 -->
-        <datalist id="station-list"></datalist>
 
         <div class="button-row">
           <button id="swap-button" class="secondary-button" type="button">交換起終點</button>
@@ -131,7 +188,7 @@
   </main>
 
   <footer>
-    <p>Demo53 Web · GitHub Pages</p>
+    <p>TransAutumnlin-Demo 54-web · GitHub Pages</p>
   </footer>
 </body>
 </html>

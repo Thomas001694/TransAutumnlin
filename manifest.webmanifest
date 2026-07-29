@@ -1,6 +1,6 @@
 {
-  "name": "奧鐵路線導航器",
-  "short_name": "奧鐵導航",
+  "name": "TransAutumnlin-Demo 54-web",
+  "short_name": "TransAutumnlin-Demo 54-web",
   "description": "搜尋奧鐵最少轉乘或最少站數的搭乘路線。",
   "lang": "zh-Hant-TW",
   "start_url": "./",

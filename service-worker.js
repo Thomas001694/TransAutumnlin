@@ -1,12 +1,12 @@
 // service-worker.js
-// 版本更新時只要修改 CACHE_NAME，即可清除舊版離線快取。
+// TransAutumnlin-Demo 54-web 可輸入下拉選單版。修改快取名稱以淘汰舊版畫面。
 
-const CACHE_NAME = "transautumnlin-route-planner-v2";
+const CACHE_NAME = "transautumnlin-route-planner-demo54-combobox-2";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v=2",
-  "./app.js?v=2",
+  "./styles.css?v=54-combobox-2",
+  "./app.js?v=54-combobox-2",
   "./route-data.js",
   "./manifest.webmanifest",
   "./icons/icon.svg",
@@ -38,7 +38,6 @@ self.addEventListener("fetch", (event) => {
   const requestUrl = new URL(event.request.url);
   if (requestUrl.origin !== self.location.origin) return;
 
-  // 採網路優先：GitHub Pages 更新後能較快取得新檔案；離線時再讀快取。
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {

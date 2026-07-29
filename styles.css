@@ -1,4 +1,4 @@
-/* styles.css：簡潔、響應式介面，不使用外部框架。 */
+/* styles.css：TransAutumnlin-Demo 54-web，可輸入文字並可展開的自製車站下拉選單。 */
 
 :root {
   color-scheme: light dark;
@@ -14,7 +14,10 @@
   --error: #a42424;
   --focus: #4b8fd1;
   --path-bg: #f7f9fb;
+  --option-hover: #e8f1f8;
+  --option-active: #d8e9f6;
   --shadow: 0 10px 30px rgba(20, 35, 50, 0.08);
+  --dropdown-shadow: 0 14px 28px rgba(20, 35, 50, 0.18);
   font-family: "Microsoft JhengHei UI", "Noto Sans TC", system-ui, sans-serif;
 }
 
@@ -32,7 +35,10 @@
     --error: #ff9b9b;
     --focus: #82bff0;
     --path-bg: #111920;
+    --option-hover: #243746;
+    --option-active: #2d4a60;
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    --dropdown-shadow: 0 16px 34px rgba(0, 0, 0, 0.45);
   }
 }
 
@@ -118,6 +124,7 @@ h3 {
 }
 
 .panel {
+  overflow: visible;
   padding: clamp(20px, 4vw, 30px);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -129,12 +136,6 @@ h3 {
   margin-bottom: 22px;
 }
 
-.section-heading > p:last-child {
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 0.93rem;
-}
-
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -143,6 +144,7 @@ h3 {
 
 .field {
   display: grid;
+  min-width: 0;
   gap: 7px;
   font-weight: 650;
 }
@@ -172,6 +174,90 @@ select:focus-visible,
 button:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--focus) 55%, transparent);
   outline-offset: 2px;
+}
+
+/* 自製可輸入下拉選單。 */
+.station-combobox {
+  position: relative;
+  min-width: 0;
+}
+
+.station-combobox input {
+  padding-right: 46px;
+}
+
+.combobox-toggle {
+  position: absolute;
+  z-index: 2;
+  top: 1px;
+  right: 1px;
+  width: 42px;
+  min-height: 42px;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--border);
+  border-radius: 0 7px 7px 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.combobox-toggle:hover {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  color: var(--text);
+}
+
+.station-combobox[data-open="true"] .combobox-toggle span {
+  display: inline-block;
+  transform: rotate(180deg);
+}
+
+.combobox-options {
+  position: absolute;
+  z-index: 1000;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  max-height: min(320px, 48vh);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-bg);
+  box-shadow: var(--dropdown-shadow);
+  list-style: none;
+  font-weight: 500;
+}
+
+.combobox-option,
+.combobox-empty {
+  display: block;
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 7px;
+  line-height: 1.4;
+}
+
+.combobox-option {
+  cursor: pointer;
+}
+
+.combobox-option:hover,
+.combobox-option[data-active="true"] {
+  background: var(--option-hover);
+}
+
+.combobox-option[aria-selected="true"] {
+  background: var(--option-active);
+  font-weight: 750;
+}
+
+.combobox-empty {
+  color: var(--muted);
+  cursor: default;
 }
 
 .button-row {
@@ -318,7 +404,7 @@ footer p {
   display: none !important;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .header-inner {
     align-items: flex-start;
     flex-direction: column;
@@ -334,36 +420,14 @@ footer p {
   }
 
   .button-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    justify-content: stretch;
   }
 
-  .primary-button {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 430px) {
-  .header-inner,
-  .page-shell {
-    width: min(100% - 20px, 1060px);
+  .button-row button {
+    flex: 1 1 145px;
   }
 
-  .button-row {
-    grid-template-columns: 1fr;
-  }
-
-  .primary-button {
-    grid-column: auto;
-  }
-
-  .station-path {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .path-arrow {
-    transform: rotate(90deg);
-    align-self: center;
+  .combobox-options {
+    max-height: min(280px, 45vh);
   }
 }

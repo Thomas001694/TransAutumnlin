@@ -1,5 +1,5 @@
 // app.js
-// Demo52.py 的瀏覽器版本。純 JavaScript，不需要後端伺服器。
+// TransAutumnlin-Demo 54-web 瀏覽器版本。純 JavaScript，不需要後端伺服器。
 
 import { ROUTE_DATA, TRANSFERABLE } from "./route-data.js";
 
@@ -316,7 +316,6 @@ function initializeUi() {
     start: document.querySelector("#start-station"),
     goal: document.querySelector("#goal-station"),
     via: document.querySelector("#via-station"),
-    stationList: document.querySelector("#station-list"),
     mode: document.querySelector("#search-mode"),
     swap: document.querySelector("#swap-button"),
     clear: document.querySelector("#clear-button"),
@@ -332,23 +331,199 @@ function initializeUi() {
     installButton: document.querySelector("#install-button"),
   };
 
+  const stationOrder = getStationOrder();
+  const comboboxes = [];
+
   /** 將全形空白轉為一般空白，並移除首尾空白。 */
   function normalizeStationName(value) {
     return value.replace(/\u3000/g, " ").trim();
   }
 
-  /** 建立瀏覽器原生的車站自動完成建議。 */
-  function addStationOptions() {
-    const fragment = document.createDocumentFragment();
+  /**
+   * 自製可輸入下拉選單。
+   * - 點箭頭：顯示完整站名清單。
+   * - 直接打字：依站名即時篩選。
+   * - 鍵盤：支援上下鍵、Enter、Escape。
+   */
+  class StationCombobox {
+    constructor(root) {
+      this.root = root;
+      this.input = root.querySelector('input[role="combobox"]');
+      this.toggle = root.querySelector(".combobox-toggle");
+      this.list = root.querySelector('[role="listbox"]');
+      this.allowEmpty = root.dataset.allowEmpty === "true";
+      this.filteredStations = [];
+      this.activeIndex = -1;
 
-    for (const station of getStationOrder()) {
-      const option = document.createElement("option");
-      option.value = station;
-      fragment.append(option);
+      this.input.addEventListener("input", () => {
+        this.open(this.input.value);
+      });
+
+      this.input.addEventListener("click", () => {
+        if (!this.isOpen()) this.open(this.input.value);
+      });
+
+      this.input.addEventListener("keydown", (event) => {
+        this.handleKeydown(event);
+      });
+
+      this.toggle.addEventListener("click", () => {
+        if (this.isOpen()) {
+          this.close();
+        } else {
+          this.open("");
+          this.input.focus();
+        }
+      });
+
+      this.list.addEventListener("pointerdown", (event) => {
+        // 避免點選選項時輸入框先失焦，造成清單提早關閉。
+        event.preventDefault();
+      });
+
+      this.list.addEventListener("click", (event) => {
+        const option = event.target.closest(".combobox-option");
+        if (!option) return;
+        this.selectValue(option.dataset.value ?? "");
+      });
     }
 
-    elements.stationList.replaceChildren(fragment);
+    isOpen() {
+      return !this.list.hidden;
+    }
+
+    open(query = "") {
+      closeOtherComboboxes(this);
+      this.render(query);
+      this.list.hidden = false;
+      this.root.dataset.open = "true";
+      this.input.setAttribute("aria-expanded", "true");
+    }
+
+    close() {
+      this.list.hidden = true;
+      this.root.dataset.open = "false";
+      this.input.setAttribute("aria-expanded", "false");
+      this.input.removeAttribute("aria-activedescendant");
+      this.activeIndex = -1;
+    }
+
+    render(query) {
+      const normalizedQuery = normalizeStationName(query).toLocaleLowerCase("zh-Hant-TW");
+      this.filteredStations = stationOrder.filter((station) => (
+        normalizedQuery === "" || station.toLocaleLowerCase("zh-Hant-TW").includes(normalizedQuery)
+      ));
+
+      this.list.replaceChildren();
+      const fragment = document.createDocumentFragment();
+
+      if (this.allowEmpty && normalizedQuery === "") {
+        fragment.append(this.createOption("", "不指定經由站"));
+      }
+
+      for (const station of this.filteredStations) {
+        fragment.append(this.createOption(station, station));
+      }
+
+      if (fragment.childNodes.length === 0) {
+        const empty = document.createElement("li");
+        empty.className = "combobox-empty";
+        empty.textContent = "找不到符合的車站";
+        fragment.append(empty);
+      }
+
+      this.list.append(fragment);
+      this.activeIndex = -1;
+    }
+
+    createOption(value, label) {
+      const option = document.createElement("li");
+      option.id = `${this.list.id}-option-${value || "empty"}`;
+      option.className = "combobox-option";
+      option.dataset.value = value;
+      option.setAttribute("role", "option");
+      option.setAttribute("aria-selected", String(this.input.value === value));
+      option.textContent = label;
+      return option;
+    }
+
+    getOptions() {
+      return [...this.list.querySelectorAll(".combobox-option")];
+    }
+
+    setActiveIndex(index) {
+      const options = this.getOptions();
+      if (options.length === 0) return;
+
+      this.activeIndex = Math.max(0, Math.min(index, options.length - 1));
+      options.forEach((option, optionIndex) => {
+        option.dataset.active = String(optionIndex === this.activeIndex);
+      });
+
+      const activeOption = options[this.activeIndex];
+      this.input.setAttribute("aria-activedescendant", activeOption.id);
+      activeOption.scrollIntoView({ block: "nearest" });
+    }
+
+    selectValue(value) {
+      this.input.value = value;
+      this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      this.close();
+      this.input.focus();
+    }
+
+    handleKeydown(event) {
+      const options = this.getOptions();
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (!this.isOpen()) this.open(this.input.value);
+        this.setActiveIndex(this.activeIndex + 1);
+        return;
+      }
+
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (!this.isOpen()) this.open(this.input.value);
+        const nextIndex = this.activeIndex < 0 ? this.getOptions().length - 1 : this.activeIndex - 1;
+        this.setActiveIndex(nextIndex);
+        return;
+      }
+
+      if (event.key === "Enter" && this.isOpen() && this.activeIndex >= 0) {
+        event.preventDefault();
+        const activeOption = this.getOptions()[this.activeIndex];
+        if (activeOption) this.selectValue(activeOption.dataset.value ?? "");
+        return;
+      }
+
+      if (event.key === "Escape" && this.isOpen()) {
+        event.preventDefault();
+        this.close();
+        return;
+      }
+
+      if (event.key === "Tab") {
+        this.close();
+      }
+    }
   }
+
+  function closeOtherComboboxes(current = null) {
+    for (const combobox of comboboxes) {
+      if (combobox !== current) combobox.close();
+    }
+  }
+
+  for (const root of document.querySelectorAll("[data-station-combobox]")) {
+    comboboxes.push(new StationCombobox(root));
+  }
+
+  document.addEventListener("pointerdown", (event) => {
+    if (!event.target.closest("[data-station-combobox]")) {
+      closeOtherComboboxes();
+    }
+  });
 
   function setStatus(message, type = "neutral") {
     elements.status.textContent = message;
@@ -415,6 +590,7 @@ function initializeUi() {
 
   elements.form.addEventListener("submit", (event) => {
     event.preventDefault();
+    closeOtherComboboxes();
 
     const start = normalizeStationName(elements.start.value);
     const goal = normalizeStationName(elements.goal.value);
@@ -422,7 +598,6 @@ function initializeUi() {
     const via = viaText || null;
     const mode = elements.mode.value;
 
-    // 將整理後的站名同步回輸入框，避免不可見空白造成誤判。
     elements.start.value = start;
     elements.goal.value = goal;
     elements.via.value = viaText;
@@ -450,18 +625,19 @@ function initializeUi() {
     const start = elements.start.value;
     elements.start.value = elements.goal.value;
     elements.goal.value = start;
+    closeOtherComboboxes();
     hideResult();
     setStatus("已交換起點與終點，請重新查詢。", "neutral");
   });
 
   elements.clear.addEventListener("click", () => {
     elements.form.reset();
+    closeOtherComboboxes();
     hideResult();
     setStatus("請輸入起點與終點。", "neutral");
     elements.start.focus();
   });
 
-  // 使用者修改條件後，隱藏舊結果，避免誤認為結果已同步更新。
   for (const input of [elements.start, elements.goal, elements.via, elements.mode]) {
     input.addEventListener("input", () => {
       hideResult();
@@ -469,7 +645,6 @@ function initializeUi() {
     });
   }
 
-  // PWA 安裝提示：支援的瀏覽器會顯示「安裝到裝置」。
   let deferredInstallPrompt = null;
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
@@ -493,13 +668,12 @@ function initializeUi() {
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js?v=2").catch(() => {
+      navigator.serviceWorker.register("./service-worker.js?v=54-combobox-1").catch(() => {
         // 離線快取失敗不影響路線查詢，因此不打斷使用者操作。
       });
     });
   }
 
-  addStationOptions();
   hideResult();
   setStatus("請輸入起點與終點。", "neutral");
 }

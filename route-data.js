@@ -1,5 +1,5 @@
 // route-data.js
-// 奧鐵路線與轉乘站資料。保持 UTF-8，所有站名與 Demo52.py 一致。
+// 奧鐵路線與轉乘站資料。保持 UTF-8，所有站名與 TransAutumnlin-Demo 54-web 一致。
 
 export const ROUTE_DATA = [
   {
