@@ -16,7 +16,7 @@
     <div class="header-inner">
       <div>
         <p class="eyebrow">TransAutumnlin Route Planner</p>
-        <h1>奧鐵路線導航器</h1>
+        <h1>奧鐵路線查詢工具</h1>
         <p class="subtitle">依起點、終點與經由站搜尋最佳搭乘路線。</p>
       </div>
       <button id="install-button" class="secondary-button install-button" type="button" hidden>
@@ -29,34 +29,33 @@
     <section class="panel" aria-labelledby="condition-title">
       <div class="section-heading">
         <h2 id="condition-title">行程條件</h2>
-        <p>所有運算都在瀏覽器內完成，不會傳送站名資料。</p>
       </div>
 
       <form id="route-form">
         <div class="form-grid">
           <label class="field">
-            <span>起點站</span>
+            <span>起點</span>
             <select id="start-station" required>
               <option value="">請選擇</option>
             </select>
           </label>
 
           <label class="field">
-            <span>終點站</span>
+            <span>終點</span>
             <select id="goal-station" required>
               <option value="">請選擇</option>
             </select>
           </label>
 
           <label class="field">
-            <span>經由站</span>
+            <span>經由(可選)</span>
             <select id="via-station">
               <option value="">不指定</option>
             </select>
           </label>
 
           <label class="field">
-            <span>優先方式</span>
+            <span>排列方式</span>
             <select id="search-mode">
               <option value="1">最少轉乘</option>
               <option value="2">最少站數</option>
@@ -82,7 +81,7 @@
 
       <dl class="summary-grid">
         <div class="summary-item route-summary">
-          <dt>經過路線</dt>
+          <dt>途經路線</dt>
           <dd id="route-names"></dd>
         </div>
         <div class="summary-item">
