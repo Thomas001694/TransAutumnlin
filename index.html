@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#17324d">
-  <meta name="description" content="奧鐵路線導航器，可搜尋最少轉乘或最少站數的路線。">
-  <title>奧鐵路線導航器</title>
+  <meta name="description" content="奧鐵路線查詢工具，可搜尋最少轉乘或最少站數的路線。">
+  <title>奧鐵路線查詢工具</title>
 
   <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
@@ -16,9 +16,9 @@
   <header class="site-header">
     <div class="header-inner">
       <div>
-        <p class="eyebrow">TransAutumnlin Route Planner</p>
-        <h1>奧鐵路線導航器</h1>
-        <p class="subtitle">依起點、終點與經由站搜尋最佳搭乘路線。</p>
+        <p class="eyebrow">AR Route Planner</p>
+        <h1>奧鐵路線查詢工具</h1>
+        <p class="subtitle">整合奧鐵全路線的轉乘路徑規劃。</p>
       </div>
 
       <button id="install-button" class="secondary-button install-button" type="button" hidden>
@@ -62,7 +62,7 @@
           </label>
 
           <label class="field" for="via-station">
-            <span>經由站</span>
+            <span>經由(可選)</span>
             <input
               id="via-station"
               list="station-list"
@@ -74,7 +74,7 @@
           </label>
 
           <label class="field" for="search-mode">
-            <span>優先方式</span>
+            <span>排列方式</span>
             <select id="search-mode">
               <option value="1">最少轉乘</option>
               <option value="2">最少站數</option>
@@ -131,7 +131,7 @@
   </main>
 
   <footer>
-    <p>Demo52 Web · GitHub Pages</p>
+    <p>Demo53 Web · GitHub Pages</p>
   </footer>
 </body>
 </html>
