@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17324d">
+  <meta name="description" content="奧鐵路線導航器，可搜尋最少轉乘或最少站數的路線。">
+  <title>奧鐵路線導航器</title>
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <p class="eyebrow">TransAutumnlin Route Planner</p>
+        <h1>奧鐵路線導航器</h1>
+        <p class="subtitle">依起點、終點與經由站搜尋最佳搭乘路線。</p>
+      </div>
+      <button id="install-button" class="secondary-button install-button" type="button" hidden>
+        安裝到裝置
+      </button>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="panel" aria-labelledby="condition-title">
+      <div class="section-heading">
+        <h2 id="condition-title">行程條件</h2>
+        <p>所有運算都在瀏覽器內完成，不會傳送站名資料。</p>
+      </div>
+
+      <form id="route-form">
+        <div class="form-grid">
+          <label class="field">
+            <span>起點站</span>
+            <select id="start-station" required>
+              <option value="">請選擇</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>終點站</span>
+            <select id="goal-station" required>
+              <option value="">請選擇</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>經由站</span>
+            <select id="via-station">
+              <option value="">不指定</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>優先方式</span>
+            <select id="search-mode">
+              <option value="1">最少轉乘</option>
+              <option value="2">最少站數</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button id="swap-button" class="secondary-button" type="button">交換起終點</button>
+          <button id="clear-button" class="secondary-button" type="button">清除</button>
+          <button class="primary-button" type="submit">查詢最佳路線</button>
+        </div>
+      </form>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="result" class="panel result-panel" aria-labelledby="result-title" hidden>
+      <div class="section-heading">
+        <p class="eyebrow">查詢結果</p>
+        <h2 id="result-title"></h2>
+      </div>
+
+      <dl class="summary-grid">
+        <div class="summary-item route-summary">
+          <dt>經過路線</dt>
+          <dd id="route-names"></dd>
+        </div>
+        <div class="summary-item">
+          <dt>轉乘次數</dt>
+          <dd id="transfer-count"></dd>
+        </div>
+        <div class="summary-item">
+          <dt>總站數</dt>
+          <dd id="stop-count"></dd>
+        </div>
+        <div id="transfer-row" class="summary-item">
+          <dt>轉乘站點</dt>
+          <dd id="transfer-stations"></dd>
+        </div>
+      </dl>
+
+      <div class="path-section">
+        <h3>途經站</h3>
+        <ol id="station-path" class="station-path"></ol>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Demo52 Web · GitHub Pages 靜態網頁版</p>
+  </footer>
+</body>
+</html>
