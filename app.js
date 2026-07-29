@@ -316,6 +316,7 @@ function initializeUi() {
     start: document.querySelector("#start-station"),
     goal: document.querySelector("#goal-station"),
     via: document.querySelector("#via-station"),
+    stationList: document.querySelector("#station-list"),
     mode: document.querySelector("#search-mode"),
     swap: document.querySelector("#swap-button"),
     clear: document.querySelector("#clear-button"),
@@ -331,20 +332,22 @@ function initializeUi() {
     installButton: document.querySelector("#install-button"),
   };
 
+  /** 將全形空白轉為一般空白，並移除首尾空白。 */
+  function normalizeStationName(value) {
+    return value.replace(/\u3000/g, " ").trim();
+  }
+
+  /** 建立瀏覽器原生的車站自動完成建議。 */
   function addStationOptions() {
-    const stations = getStationOrder();
-    const createOption = (station) => {
+    const fragment = document.createDocumentFragment();
+
+    for (const station of getStationOrder()) {
       const option = document.createElement("option");
       option.value = station;
-      option.textContent = station;
-      return option;
-    };
-
-    for (const station of stations) {
-      elements.start.append(createOption(station));
-      elements.goal.append(createOption(station));
-      elements.via.append(createOption(station));
+      fragment.append(option);
     }
+
+    elements.stationList.replaceChildren(fragment);
   }
 
   function setStatus(message, type = "neutral") {
@@ -376,9 +379,17 @@ function initializeUi() {
     summary.displayStations.forEach((station, index) => {
       const item = document.createElement("li");
       item.textContent = station;
-      if (station.startsWith("【起】") || station.startsWith("【起終】")) item.dataset.role = "start";
-      if (station.startsWith("【轉】")) item.dataset.role = "transfer";
-      if (station.startsWith("【終】") || station.startsWith("【起終】")) item.dataset.role = "goal";
+
+      if (station.startsWith("【起】") || station.startsWith("【起終】")) {
+        item.dataset.role = "start";
+      }
+      if (station.startsWith("【轉】")) {
+        item.dataset.role = "transfer";
+      }
+      if (station.startsWith("【終】") || station.startsWith("【起終】")) {
+        item.dataset.role = "goal";
+      }
+
       elements.stationPath.append(item);
 
       if (index < summary.displayStations.length - 1) {
@@ -394,8 +405,8 @@ function initializeUi() {
   }
 
   function validateSelection(start, goal, via) {
-    if (!start) return "請選擇起點站。";
-    if (!goal) return "請選擇終點站。";
+    if (!start) return "請輸入起點站。";
+    if (!goal) return "請輸入終點站。";
     if (!ALL_STATIONS.has(start)) return `查無此站：${start}`;
     if (!ALL_STATIONS.has(goal)) return `查無此站：${goal}`;
     if (via && !ALL_STATIONS.has(via)) return `查無此站：${via}`;
@@ -405,12 +416,18 @@ function initializeUi() {
   elements.form.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const start = elements.start.value;
-    const goal = elements.goal.value;
-    const via = elements.via.value || null;
+    const start = normalizeStationName(elements.start.value);
+    const goal = normalizeStationName(elements.goal.value);
+    const viaText = normalizeStationName(elements.via.value);
+    const via = viaText || null;
     const mode = elements.mode.value;
-    const validationError = validateSelection(start, goal, via);
 
+    // 將整理後的站名同步回輸入框，避免不可見空白造成誤判。
+    elements.start.value = start;
+    elements.goal.value = goal;
+    elements.via.value = viaText;
+
+    const validationError = validateSelection(start, goal, via);
     if (validationError) {
       hideResult();
       setStatus(validationError, "error");
@@ -433,14 +450,24 @@ function initializeUi() {
     const start = elements.start.value;
     elements.start.value = elements.goal.value;
     elements.goal.value = start;
+    hideResult();
+    setStatus("已交換起點與終點，請重新查詢。", "neutral");
   });
 
   elements.clear.addEventListener("click", () => {
     elements.form.reset();
     hideResult();
-    setStatus("請選擇起點與終點。", "neutral");
+    setStatus("請輸入起點與終點。", "neutral");
     elements.start.focus();
   });
+
+  // 使用者修改條件後，隱藏舊結果，避免誤認為結果已同步更新。
+  for (const input of [elements.start, elements.goal, elements.via, elements.mode]) {
+    input.addEventListener("input", () => {
+      hideResult();
+      setStatus("條件已變更，請重新查詢。", "neutral");
+    });
+  }
 
   // PWA 安裝提示：支援的瀏覽器會顯示「安裝到裝置」。
   let deferredInstallPrompt = null;
@@ -466,7 +493,7 @@ function initializeUi() {
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js").catch(() => {
+      navigator.serviceWorker.register("./service-worker.js?v=2").catch(() => {
         // 離線快取失敗不影響路線查詢，因此不打斷使用者操作。
       });
     });
@@ -474,7 +501,7 @@ function initializeUi() {
 
   addStationOptions();
   hideResult();
-  setStatus("請選擇起點與終點。", "neutral");
+  setStatus("請輸入起點與終點。", "neutral");
 }
 
 if (typeof document !== "undefined") {

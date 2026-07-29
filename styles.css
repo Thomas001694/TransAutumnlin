@@ -50,6 +50,7 @@ body {
 }
 
 button,
+input,
 select {
   font: inherit;
 }
@@ -146,16 +147,27 @@ h3 {
   font-weight: 650;
 }
 
+input,
 select {
   width: 100%;
   min-height: 44px;
-  padding: 8px 38px 8px 12px;
+  padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--panel-bg);
   color: var(--text);
 }
 
+select {
+  padding-right: 38px;
+}
+
+input::placeholder {
+  color: var(--muted);
+  opacity: 0.82;
+}
+
+input:focus-visible,
 select:focus-visible,
 button:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--focus) 55%, transparent);

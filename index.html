@@ -5,20 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#17324d">
   <meta name="description" content="奧鐵路線導航器，可搜尋最少轉乘或最少站數的路線。">
-  <title>奧鐵路線查詢工具</title>
+  <title>奧鐵路線導航器</title>
+
   <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./app.js"></script>
+  <link rel="stylesheet" href="./styles.css?v=2">
+  <script type="module" src="./app.js?v=2"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="header-inner">
       <div>
         <p class="eyebrow">TransAutumnlin Route Planner</p>
-        <h1>奧鐵路線查詢工具</h1>
+        <h1>奧鐵路線導航器</h1>
         <p class="subtitle">依起點、終點與經由站搜尋最佳搭乘路線。</p>
       </div>
+
       <button id="install-button" class="secondary-button install-button" type="button" hidden>
         安裝到裝置
       </button>
@@ -31,53 +33,57 @@
         <h2 id="condition-title">行程條件</h2>
       </div>
 
-      <form id="route-form">
+      <form id="route-form" novalidate>
         <div class="form-grid">
-          <label class="field">
-            <span>起點</span>
-             <input
-                id="start-station"
-                list="station-list"
-                type="text"
-                placeholder="輸入起點站"
-                autocomplete="off"
-                required
+          <label class="field" for="start-station">
+            <span>起點站</span>
+            <input
+              id="start-station"
+              list="station-list"
+              type="text"
+              placeholder="輸入起點站"
+              autocomplete="off"
+              spellcheck="false"
+              required
             >
           </label>
 
-          <label class="field">
-            <span>終點</span>
+          <label class="field" for="goal-station">
+            <span>終點站</span>
             <input
               id="goal-station"
               list="station-list"
               type="text"
               placeholder="輸入終點站"
               autocomplete="off"
+              spellcheck="false"
               required
             >
           </label>
 
-          <label class="field">
-            <span>經由(可選)</span>
+          <label class="field" for="via-station">
+            <span>經由站</span>
             <input
               id="via-station"
               list="station-list"
               type="text"
-              placeholder="不指定"
+              placeholder="可留空"
               autocomplete="off"
+              spellcheck="false"
             >
           </label>
 
-          <datalist id="station-list"></datalist>
-
-          <label class="field">
-            <span>排列方式</span>
+          <label class="field" for="search-mode">
+            <span>優先方式</span>
             <select id="search-mode">
               <option value="1">最少轉乘</option>
               <option value="2">最少站數</option>
             </select>
           </label>
         </div>
+
+        <!-- 三個輸入欄共用同一份車站建議清單。 -->
+        <datalist id="station-list"></datalist>
 
         <div class="button-row">
           <button id="swap-button" class="secondary-button" type="button">交換起終點</button>
@@ -97,17 +103,20 @@
 
       <dl class="summary-grid">
         <div class="summary-item route-summary">
-          <dt>途經路線</dt>
+          <dt>經過路線</dt>
           <dd id="route-names"></dd>
         </div>
+
         <div class="summary-item">
           <dt>轉乘次數</dt>
           <dd id="transfer-count"></dd>
         </div>
+
         <div class="summary-item">
           <dt>總站數</dt>
           <dd id="stop-count"></dd>
         </div>
+
         <div id="transfer-row" class="summary-item">
           <dt>轉乘站點</dt>
           <dd id="transfer-stations"></dd>
@@ -122,7 +131,7 @@
   </main>
 
   <footer>
-    <p>Demo52 Web · GitHub Pages 靜態網頁版</p>
+    <p>Demo52 Web · GitHub Pages</p>
   </footer>
 </body>
 </html>
