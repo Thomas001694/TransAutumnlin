@@ -1,7 +1,7 @@
 // service-worker.js
 // TransAutumnlin-Demo 54-web 可輸入下拉選單版。修改快取名稱以淘汰舊版畫面。
 
-const CACHE_NAME = "transautumnlin-route-planner-demo54-combobox-2";
+const CACHE_NAME = "transautumnlin-route-planner-demo55-combobox-2";
 const APP_FILES = [
   "./",
   "./index.html",
