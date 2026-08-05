@@ -133,14 +133,18 @@
             </div>
           </div>
 
-          <label class="field" for="search-mode">
-            <span>排列方式</span>
-            <select id="search-mode">
-              <option value="1">最少轉乘</option>
-              <option value="2">最少站數</option>
-            </select>
-          </label>
-        </div>
+<label class="field">
+  <span>排列方式</span>
+
+  <div class="select-shell">
+    <select id="search-mode" name="mode">
+      <option value="1">最少轉乘</option>
+      <option value="2">最少站數</option>
+    </select>
+
+    <span class="select-arrow" aria-hidden="true">▾</span>
+  </div>
+</label>
 
         <div class="button-row">
           <button id="swap-button" class="secondary-button" type="button">交換起終點</button>
