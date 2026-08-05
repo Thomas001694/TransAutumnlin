@@ -9,8 +9,8 @@
 
   <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=54-combobox-2">
-  <script type="module" src="./app.js?v=54-combobox-2"></script>
+  <link rel="stylesheet" href="./styles.css?v=54-combobox-3">
+  <script type="module" src="./app.js?v=54-combobox-3"></script>
 </head>
 <body>
   <header class="site-header">
@@ -18,7 +18,7 @@
       <div>
         <p class="eyebrow">AR Route Planner</p>
         <h1>奧鐵路線查詢工具</h1>
-        <p class="subtitle">整合奧鐵全路線的轉乘路徑規劃</p>
+        <p class="subtitle">整合奧鐵全路線的轉乘路徑規劃。</p>
       </div>
 
       <button id="install-button" class="secondary-button install-button" type="button" hidden>
@@ -133,27 +133,36 @@
             </div>
           </div>
 
-<label class="field">
-  <span>排列方式</span>
+          <div class="field">
+            <label for="search-mode">排列方式</label>
+            <div class="select-shell">
+              <select id="search-mode" name="mode">
+                <option value="1">最少轉乘</option>
+                <option value="2">最少站數</option>
+              </select>
+              <span class="select-arrow" aria-hidden="true">▾</span>
+            </div>
+          </div>
+        </div>
 
-  <div class="select-shell">
-    <select id="search-mode" name="mode">
-      <option value="1">最少轉乘</option>
-      <option value="2">最少站數</option>
-    </select>
+        <div class="form-footer">
+          <p id="status" class="status" role="status" aria-live="polite">
+            請輸入起點與終點。
+          </p>
 
-    <span class="select-arrow" aria-hidden="true">▾</span>
-  </div>
-</label>
-
-        <div class="button-row">
-          <button id="swap-button" class="secondary-button" type="button">交換起終點</button>
-          <button id="clear-button" class="secondary-button" type="button">清除</button>
-          <button class="primary-button" type="submit">查詢最佳路線</button>
+          <div class="button-row">
+            <button id="swap-button" class="secondary-button" type="button">
+              交換起終點
+            </button>
+            <button id="clear-button" class="secondary-button" type="button">
+              清除
+            </button>
+            <button class="primary-button" type="submit">
+              查詢最佳路線
+            </button>
+          </div>
         </div>
       </form>
-
-      <p id="status" class="status" role="status" aria-live="polite"></p>
     </section>
 
     <section id="result" class="panel result-panel" aria-labelledby="result-title" hidden>
