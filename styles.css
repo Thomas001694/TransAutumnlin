@@ -1,0 +1,885 @@
+/*
+ * styles.css
+ * TransAutumnlin-Demo 57-web
+ *
+ * Demo 57：
+ * - 固定奧鐵路線色。
+ * - 途經站改為左側連續實線。
+ * - 路線名稱以直式顯示於線路旁。
+ * - 起點、轉乘、終點只以大字粗體突出，不使用外框卡片。
+ * - 非轉乘中間站預設收合為「途經 X 站」，點擊文字即可展開。
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --page-bg: #f3f5f7;
+  --panel-bg: #ffffff;
+  --panel-bg-soft: #f7f9fb;
+  --text: #17212b;
+  --muted: #607080;
+  --border: #d7dee5;
+
+  --primary: #17324d;
+  --primary-hover: #244a6f;
+  --button-text: #ffffff;
+
+  --success: #17653b;
+  --error: #a42424;
+  --focus: #4b8fd1;
+
+  --transfer-accent: #e5a900;
+  --goal-accent: #df4552;
+  --start-accent: #4d9cf3;
+
+  --option-hover: #e8f1f8;
+  --option-active: #d8e9f6;
+
+  --shadow: 0 10px 30px rgba(20, 35, 50, 0.08);
+  --dropdown-shadow: 0 14px 28px rgba(20, 35, 50, 0.18);
+
+  font-family: "Microsoft JhengHei UI", "Noto Sans TC", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-bg: #0d141a;
+    --panel-bg: #16212a;
+    --panel-bg-soft: #101920;
+    --text: #edf3f7;
+    --muted: #9dafbc;
+    --border: #334652;
+
+    --primary: #78aeda;
+    --primary-hover: #9bc3e3;
+    --button-text: #0d1720;
+
+    --success: #79d5a2;
+    --error: #ff9b9b;
+    --focus: #82bff0;
+
+    --transfer-accent: #ffbd18;
+    --goal-accent: #f0525f;
+    --start-accent: #58a8f5;
+
+    --option-hover: #243746;
+    --option-active: #2d4a60;
+
+    --shadow: 0 12px 34px rgba(0, 0, 0, 0.27);
+    --dropdown-shadow: 0 16px 34px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* ===== 全域 ===== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+/* ===== 頁首 ===== */
+
+.site-header {
+  background: var(--primary);
+  color: var(--button-text);
+}
+
+.header-inner,
+.page-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 34px 0;
+}
+
+h1 {
+  margin-bottom: 6px;
+  font-size: clamp(1.75rem, 4vw, 2.55rem);
+  line-height: 1.2;
+}
+
+h2 {
+  margin-bottom: 4px;
+  font-size: 1.42rem;
+}
+
+h3 {
+  margin-bottom: 4px;
+  font-size: 1.08rem;
+}
+
+.eyebrow {
+  margin-bottom: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.82;
+}
+
+.subtitle {
+  margin-bottom: 0;
+  opacity: 0.88;
+}
+
+/* ===== 主容器 ===== */
+
+.page-shell {
+  display: grid;
+  gap: 22px;
+  padding: 28px 0 48px;
+}
+
+.panel {
+  overflow: visible;
+  padding: clamp(20px, 4vw, 30px);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel-bg);
+  box-shadow: var(--shadow);
+}
+
+.section-heading {
+  margin-bottom: 22px;
+}
+
+/* ===== 行程條件 ===== */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.field {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+  font-weight: 650;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  color: var(--text);
+}
+
+input::placeholder {
+  color: var(--muted);
+  opacity: 0.82;
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--focus) 55%, transparent);
+  outline-offset: 2px;
+}
+
+/* ===== 可輸入車站下拉選單 ===== */
+
+.station-combobox {
+  position: relative;
+  min-width: 0;
+}
+
+.station-combobox input {
+  padding-right: 46px;
+}
+
+.combobox-toggle {
+  position: absolute;
+  z-index: 2;
+  top: 1px;
+  right: 1px;
+  width: 42px;
+  min-height: 42px;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--border);
+  border-radius: 0 7px 7px 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.combobox-toggle:hover {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  color: var(--text);
+}
+
+.station-combobox[data-open="true"] .combobox-toggle span {
+  display: inline-block;
+  transform: rotate(180deg);
+}
+
+.combobox-options {
+  position: absolute;
+  z-index: 1000;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  max-height: min(320px, 48vh);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-bg);
+  box-shadow: var(--dropdown-shadow);
+  list-style: none;
+  font-weight: 500;
+}
+
+.combobox-option,
+.combobox-empty {
+  display: block;
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 7px;
+  line-height: 1.4;
+}
+
+.combobox-option {
+  cursor: pointer;
+}
+
+.combobox-option:hover,
+.combobox-option[data-active="true"] {
+  background: var(--option-hover);
+}
+
+.combobox-option[aria-selected="true"] {
+  background: var(--option-active);
+  font-weight: 750;
+}
+
+.combobox-empty {
+  color: var(--muted);
+  cursor: default;
+}
+
+/* ===== 排列方式 ===== */
+
+.select-shell {
+  position: relative;
+  min-width: 0;
+}
+
+.select-shell select {
+  min-height: 44px;
+  padding: 8px 46px 8px 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.select-arrow {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  display: grid;
+  width: 42px;
+  min-height: 42px;
+  place-items: center;
+  border-left: 1px solid var(--border);
+  border-radius: 0 7px 7px 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.select-shell:hover .select-arrow {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  color: var(--text);
+}
+
+/* ===== 表單底部 ===== */
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  margin-top: 22px;
+}
+
+.status {
+  min-width: 0;
+  min-height: 1.6em;
+  margin: 0;
+  color: var(--muted);
+}
+
+.status[data-type="success"] {
+  color: var(--success);
+}
+
+.status[data-type="error"] {
+  color: var(--error);
+  font-weight: 700;
+}
+
+.button-row {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-left: auto;
+}
+
+button {
+  min-height: 42px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.primary-button {
+  background: var(--primary);
+  color: var(--button-text);
+}
+
+.primary-button:hover {
+  background: var(--primary-hover);
+}
+
+.secondary-button {
+  border-color: var(--border);
+  background: transparent;
+  color: inherit;
+}
+
+.secondary-button:hover {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.site-header .secondary-button {
+  border-color: color-mix(in srgb, var(--button-text) 45%, transparent);
+  color: var(--button-text);
+}
+
+.install-button {
+  flex: 0 0 auto;
+}
+
+/* =========================================================
+   Demo 57：結果摘要
+   ========================================================= */
+
+.result-heading {
+  margin-bottom: 22px;
+}
+
+.result-heading h2 {
+  margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2.05rem);
+}
+
+.result-eyebrow {
+  margin-bottom: 5px;
+  color: var(--muted);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.15fr) repeat(2, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 0;
+}
+
+.summary-item {
+  min-width: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-bg-soft);
+}
+
+.summary-item dt {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
+.summary-item dd {
+  margin: 8px 0 0;
+}
+
+.metric-card dd {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.metric-card strong {
+  color: var(--text);
+  font-size: clamp(2.1rem, 5vw, 3rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-unit {
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.transfer-summary {
+  grid-column: 1 / -1;
+}
+
+/* 路線色標籤 */
+.route-badge-list,
+.transfer-chip-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.route-badge {
+  --line-color: #8ca0b0;
+  --line-text: #ffffff;
+
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 5px 11px;
+  border: 1px solid color-mix(in srgb, var(--line-color) 72%, var(--border));
+  border-radius: 8px;
+  background: var(--line-color);
+  color: var(--line-text);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.route-arrow {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.transfer-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 5px 11px;
+  border: 1px solid color-mix(in srgb, var(--transfer-accent) 70%, var(--border));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--transfer-accent) 10%, transparent);
+  font-weight: 800;
+}
+
+/* =========================================================
+   Demo 57：途經站垂直路線
+   ========================================================= */
+
+.path-section {
+  margin-top: 18px;
+  padding: 20px 20px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.path-heading {
+  margin-bottom: 18px;
+}
+
+.path-heading h3 {
+  margin: 0;
+  font-size: 1.18rem;
+}
+
+.path-heading p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.route-timeline {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/*
+ * 每一段路線由兩欄構成：
+ * 左邊為直式路線名稱，右邊為彩色實線＋站點。
+ */
+.journey-segment {
+  --line-color: #8ca0b0;
+
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.segment-line-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 10px 7px 10px 0;
+  color: var(--line-color);
+  font-size: 0.88rem;
+  font-weight: 850;
+  line-height: 1.05;
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+/* 白色路線在亮色背景仍保持可讀 */
+.journey-segment[data-light-line="true"] .segment-line-name {
+  text-shadow:
+    0 0 2px #000000,
+    0 0 4px #000000;
+}
+
+.segment-body {
+  position: relative;
+  min-width: 0;
+  padding-left: 58px;
+}
+
+/* 完整實線：高度會隨 details 展開自動延伸 */
+.segment-rail {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 20px;
+  width: 6px;
+  border-radius: 999px;
+  background: var(--line-color);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--line-color) 25%, transparent);
+}
+
+/* 第一段從起點圓心開始，最後一段於終點圓心結束 */
+.journey-segment:first-child .segment-rail {
+  top: 30px;
+}
+
+.journey-segment:last-child .segment-rail {
+  bottom: 30px;
+}
+
+/* ===== 起點 / 轉乘 / 終點 ===== */
+
+.key-station {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+  padding: 10px 0;
+}
+
+.station-marker {
+  position: absolute;
+  top: 50%;
+  left: -48px;
+  width: 24px;
+  height: 24px;
+  transform: translateY(-50%);
+  border: 4px solid var(--panel-bg);
+  border-radius: 50%;
+  background: var(--line-color);
+  box-shadow:
+    0 0 0 2px var(--line-color),
+    0 2px 7px rgba(0, 0, 0, 0.24);
+}
+
+.station-name {
+  font-size: 1.04rem;
+}
+
+.key-station .station-name {
+  font-size: clamp(1.28rem, 2.5vw, 1.6rem);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+/* 起點節點 */
+.key-station[data-role="start"] .station-marker {
+  background: var(--start-accent);
+  box-shadow:
+    0 0 0 2px var(--start-accent),
+    0 2px 7px rgba(0, 0, 0, 0.24);
+}
+
+/* 轉乘節點 */
+.key-station[data-role="transfer"] .station-marker {
+  width: 27px;
+  height: 27px;
+  background: var(--transfer-accent);
+  box-shadow:
+    0 0 0 2px var(--transfer-accent),
+    0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.key-station[data-role="transfer"] .station-name {
+  color: color-mix(in srgb, var(--text) 88%, var(--transfer-accent));
+}
+
+/* 終點節點 */
+.key-station[data-role="goal"] .station-marker {
+  background: var(--goal-accent);
+  box-shadow:
+    0 0 0 2px var(--goal-accent),
+    0 2px 7px rgba(0, 0, 0, 0.24);
+}
+
+/* 起點同時也是終點 */
+.key-station[data-role="start-goal"] .station-marker {
+  background: linear-gradient(135deg, var(--start-accent) 50%, var(--goal-accent) 50%);
+}
+
+/* ===== 可折疊非轉乘站 ===== */
+
+.intermediate-details {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+.intermediate-details > summary {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 720;
+  list-style: none;
+  user-select: none;
+}
+
+.intermediate-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* 小箭頭只是折疊狀態提示，不做按鈕框 */
+.intermediate-details > summary::after {
+  width: 9px;
+  height: 9px;
+  margin-left: 12px;
+  transform: rotate(45deg);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  content: "";
+  transition: transform 150ms ease;
+}
+
+.intermediate-details[open] > summary::after {
+  transform: rotate(225deg) translate(-2px, -2px);
+}
+
+.intermediate-details > summary:hover {
+  color: var(--text);
+}
+
+.intermediate-list {
+  margin: 0;
+  padding: 0 0 4px;
+  list-style: none;
+}
+
+.intermediate-station {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 7px 0;
+  font-size: 1rem;
+}
+
+.intermediate-station::before {
+  position: absolute;
+  top: 50%;
+  left: -43px;
+  z-index: 2;
+  width: 14px;
+  height: 14px;
+  transform: translateY(-50%);
+  border: 3px solid var(--panel-bg);
+  border-radius: 50%;
+  background: var(--line-color);
+  box-shadow: 0 0 0 1px var(--line-color);
+  content: "";
+}
+
+/*
+ * 相鄰路線段完全貼合，讓前一段顏色與下一段顏色
+ * 在轉乘站附近直接銜接，不形成虛線或空隙。
+ */
+.journey-segment + .journey-segment {
+  margin-top: 0;
+}
+
+.single-station-journey {
+  position: relative;
+  min-height: 70px;
+  padding: 12px 0 12px 70px;
+}
+
+.single-station-journey::before {
+  position: absolute;
+  top: 50%;
+  left: 24px;
+  width: 26px;
+  height: 26px;
+  transform: translateY(-50%);
+  border: 5px solid var(--panel-bg);
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--start-accent) 50%, var(--goal-accent) 50%);
+  box-shadow: 0 0 0 2px var(--start-accent);
+  content: "";
+}
+
+.single-station-journey strong {
+  font-size: clamp(1.28rem, 2.5vw, 1.6rem);
+}
+
+/* ===== 頁尾 ===== */
+
+footer {
+  padding: 0 16px 26px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.86rem;
+}
+
+footer p {
+  margin: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ===== 平板 ===== */
+
+@media (max-width: 860px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .route-summary,
+  .transfer-summary {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ===== 手機 ===== */
+
+@media (max-width: 700px) {
+  .header-inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .form-grid,
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .route-summary,
+  .transfer-summary {
+    grid-column: auto;
+  }
+
+  .form-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .button-row {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .button-row button {
+    flex: 1 1 145px;
+  }
+
+  .combobox-options {
+    max-height: min(280px, 45vh);
+  }
+
+  .path-section {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .journey-segment {
+    grid-template-columns: 46px minmax(0, 1fr);
+  }
+
+  .segment-line-name {
+    padding-right: 5px;
+    font-size: 0.77rem;
+  }
+
+  .segment-body {
+    padding-left: 51px;
+  }
+
+  .segment-rail {
+    left: 18px;
+    width: 5px;
+  }
+
+  .station-marker {
+    left: -43px;
+  }
+
+  .intermediate-station::before {
+    left: -38px;
+  }
+}

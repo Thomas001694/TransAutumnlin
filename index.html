@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17324d">
+  <meta name="description" content="奧鐵路線查詢工具，整合奧鐵全路線的轉乘路徑規劃。">
+  <title>奧鐵路線查詢工具</title>
+
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css?v=57-timeline-1">
+  <script type="module" src="./app.js?v=57-timeline-1"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <p class="eyebrow">AR Route Planner</p>
+        <h1>奧鐵路線查詢工具</h1>
+        <p class="subtitle">整合奧鐵全路線的轉乘路徑規劃。</p>
+      </div>
+
+      <button id="install-button" class="secondary-button install-button" type="button" hidden>
+        安裝到裝置
+      </button>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <!-- ===== 行程條件 ===== -->
+    <section class="panel condition-panel" aria-labelledby="condition-title">
+      <div class="section-heading">
+        <h2 id="condition-title">行程條件</h2>
+      </div>
+
+      <form id="route-form" novalidate>
+        <div class="form-grid">
+          <!-- 起點站：可輸入＋可展開下拉清單 -->
+          <div class="field">
+            <label for="start-station">起點站</label>
+            <div class="station-combobox" data-station-combobox>
+              <input
+                id="start-station"
+                type="text"
+                placeholder="輸入或選擇起點站"
+                autocomplete="off"
+                spellcheck="false"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="start-station-options"
+                required
+              >
+              <button
+                class="combobox-toggle"
+                type="button"
+                aria-label="展開起點站清單"
+                aria-controls="start-station-options"
+                tabindex="-1"
+              >
+                <span aria-hidden="true">▾</span>
+              </button>
+              <ul
+                id="start-station-options"
+                class="combobox-options"
+                role="listbox"
+                hidden
+              ></ul>
+            </div>
+          </div>
+
+          <!-- 終點站：可輸入＋可展開下拉清單 -->
+          <div class="field">
+            <label for="goal-station">終點站</label>
+            <div class="station-combobox" data-station-combobox>
+              <input
+                id="goal-station"
+                type="text"
+                placeholder="輸入或選擇終點站"
+                autocomplete="off"
+                spellcheck="false"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="goal-station-options"
+                required
+              >
+              <button
+                class="combobox-toggle"
+                type="button"
+                aria-label="展開終點站清單"
+                aria-controls="goal-station-options"
+                tabindex="-1"
+              >
+                <span aria-hidden="true">▾</span>
+              </button>
+              <ul
+                id="goal-station-options"
+                class="combobox-options"
+                role="listbox"
+                hidden
+              ></ul>
+            </div>
+          </div>
+
+          <!-- 經由站：可留空 -->
+          <div class="field">
+            <label for="via-station">經由站（可選）</label>
+            <div class="station-combobox" data-station-combobox data-allow-empty="true">
+              <input
+                id="via-station"
+                type="text"
+                placeholder="輸入、選擇或留空"
+                autocomplete="off"
+                spellcheck="false"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="via-station-options"
+              >
+              <button
+                class="combobox-toggle"
+                type="button"
+                aria-label="展開經由站清單"
+                aria-controls="via-station-options"
+                tabindex="-1"
+              >
+                <span aria-hidden="true">▾</span>
+              </button>
+              <ul
+                id="via-station-options"
+                class="combobox-options"
+                role="listbox"
+                hidden
+              ></ul>
+            </div>
+          </div>
+
+          <!-- 排列方式：只有下拉選擇，不提供文字輸入 -->
+          <div class="field">
+            <label for="search-mode">排列方式</label>
+            <div class="select-shell">
+              <select id="search-mode" name="mode">
+                <option value="1">最少轉乘</option>
+                <option value="2">最少站數</option>
+              </select>
+              <span class="select-arrow" aria-hidden="true">▾</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <p id="status" class="status" role="status" aria-live="polite">
+            請輸入起點與終點。
+          </p>
+
+          <div class="button-row">
+            <button id="swap-button" class="secondary-button" type="button">
+              交換起終點
+            </button>
+            <button id="clear-button" class="secondary-button" type="button">
+              清除
+            </button>
+            <button class="primary-button" type="submit">
+              查詢最佳路線
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===== Demo 57：查詢結果 ===== -->
+    <section id="result" class="panel result-panel" aria-labelledby="result-title" hidden>
+      <div class="result-heading">
+        <div>
+          <p class="eyebrow result-eyebrow">查詢結果</p>
+          <h2 id="result-title"></h2>
+        </div>
+      </div>
+
+      <!-- 摘要資訊 -->
+      <dl class="summary-grid">
+        <div class="summary-item route-summary">
+          <dt>經過路線</dt>
+          <dd id="route-names" class="route-badge-list"></dd>
+        </div>
+
+        <div class="summary-item metric-card">
+          <dt>轉乘次數</dt>
+          <dd>
+            <strong id="transfer-count"></strong>
+            <span class="metric-unit">次</span>
+          </dd>
+        </div>
+
+        <div class="summary-item metric-card">
+          <dt>總站數</dt>
+          <dd>
+            <strong id="stop-count"></strong>
+            <span class="metric-unit">站</span>
+          </dd>
+        </div>
+
+        <div id="transfer-row" class="summary-item transfer-summary">
+          <dt>轉乘站點</dt>
+          <dd id="transfer-stations" class="transfer-chip-list"></dd>
+        </div>
+      </dl>
+
+      <!--
+        Demo 57 途經站：
+        app.js 會依「每一段搭乘路線」建立左側實線與直式路線名稱。
+        非起訖／轉乘站預設收合為「途經 X 站」。
+      -->
+      <section class="path-section" aria-labelledby="path-title">
+        <div class="path-heading">
+          <div>
+            <h3 id="path-title">途經站</h3>
+            <p>依搭乘順序顯示完整行程</p>
+          </div>
+        </div>
+
+        <div id="route-timeline" class="route-timeline" aria-label="完整途經站"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <p>Demo 57-web · GitHub Pages</p>
+  </footer>
+</body>
+</html>
