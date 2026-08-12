@@ -9,8 +9,8 @@
 
   <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=55-combobox-3">
-  <script type="module" src="./app.js?v=55-combobox-3"></script>
+  <link rel="stylesheet" href="./styles.css?v=56-timeline-1">
+  <script type="module" src="./app.js?v=56-timeline-1"></script>
 </head>
 <body>
   <header class="site-header">
@@ -28,13 +28,15 @@
   </header>
 
   <main class="page-shell">
-    <section class="panel" aria-labelledby="condition-title">
+    <!-- ===== 行程條件 ===== -->
+    <section class="panel condition-panel" aria-labelledby="condition-title">
       <div class="section-heading">
         <h2 id="condition-title">行程條件</h2>
       </div>
 
       <form id="route-form" novalidate>
         <div class="form-grid">
+          <!-- 起點站：可輸入＋可展開下拉清單 -->
           <div class="field">
             <label for="start-station">起點站</label>
             <div class="station-combobox" data-station-combobox>
@@ -68,6 +70,7 @@
             </div>
           </div>
 
+          <!-- 終點站：可輸入＋可展開下拉清單 -->
           <div class="field">
             <label for="goal-station">終點站</label>
             <div class="station-combobox" data-station-combobox>
@@ -101,6 +104,7 @@
             </div>
           </div>
 
+          <!-- 經由站：可留空 -->
           <div class="field">
             <label for="via-station">經由站（可選）</label>
             <div class="station-combobox" data-station-combobox data-allow-empty="true">
@@ -133,6 +137,7 @@
             </div>
           </div>
 
+          <!-- 排列方式：純下拉選單，不可輸入 -->
           <div class="field">
             <label for="search-mode">排列方式</label>
             <div class="select-shell">
@@ -165,43 +170,71 @@
       </form>
     </section>
 
+    <!-- ===== Demo 56：查詢結果 UI ===== -->
     <section id="result" class="panel result-panel" aria-labelledby="result-title" hidden>
-      <div class="section-heading">
-        <p class="eyebrow">查詢結果</p>
-        <h2 id="result-title"></h2>
+      <div class="result-heading">
+        <div>
+          <p class="eyebrow result-eyebrow">查詢結果</p>
+          <h2 id="result-title"></h2>
+        </div>
       </div>
 
+      <!-- 摘要卡片 -->
       <dl class="summary-grid">
         <div class="summary-item route-summary">
-          <dt>經過路線</dt>
+          <dt>
+            <span class="summary-icon" aria-hidden="true">⌁</span>
+            經過路線
+          </dt>
           <dd id="route-names"></dd>
         </div>
 
-        <div class="summary-item">
-          <dt>轉乘次數</dt>
+        <div class="summary-item metric-card">
+          <dt>
+            <span class="summary-icon" aria-hidden="true">⇄</span>
+            轉乘次數
+          </dt>
           <dd id="transfer-count"></dd>
+          <span class="metric-unit">次</span>
         </div>
 
-        <div class="summary-item">
-          <dt>總站數</dt>
+        <div class="summary-item metric-card">
+          <dt>
+            <span class="summary-icon" aria-hidden="true">◎</span>
+            總站數
+          </dt>
           <dd id="stop-count"></dd>
+          <span class="metric-unit">站</span>
         </div>
 
-        <div id="transfer-row" class="summary-item">
-          <dt>轉乘站點</dt>
+        <!-- app.js 會在沒有轉乘時自動 hidden -->
+        <div id="transfer-row" class="summary-item transfer-summary">
+          <dt>
+            <span class="summary-icon" aria-hidden="true">◇</span>
+            轉乘站點
+          </dt>
           <dd id="transfer-stations"></dd>
+          <p class="transfer-hint">請依序於以上站點轉乘。</p>
         </div>
       </dl>
 
+      <!-- 路線時間軸 -->
       <div class="path-section">
-        <h3>途經站</h3>
-        <ol id="station-path" class="station-path"></ol>
+        <div class="path-heading">
+          <div>
+            <h3>途經站</h3>
+            <p>依搭乘順序顯示完整行程</p>
+          </div>
+        </div>
+
+        <!-- app.js 會動態產生站名與箭頭 -->
+        <ol id="station-path" class="station-path" aria-label="完整途經站"></ol>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>Demo 55-web · GitHub Pages</p>
+    <p>Demo 56-web · GitHub Pages</p>
   </footer>
 </body>
 </html>
